@@ -3,6 +3,8 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 from core.settings.jazzmin import JAZZMIN_SETTINGS
+from datetime import timedelta
+
 
 load_dotenv()
 
@@ -181,3 +183,23 @@ CKEDITOR_5_CONFIGS = {
     },
 }
 AUTH_USER_MODEL = 'testapp.CustomUser'
+
+# 1. Указываем DRF использовать JWT как основной способ авторизации
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+# 2. Настройки SimpleJWT (указываем lifetimes и поле email)
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Токен живёт 1 час
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Рефреш живёт 1 день
+    'AUTH_HEADER_TYPES': ('Bearer',),                # В заголовке пишем Bearer <token>
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
